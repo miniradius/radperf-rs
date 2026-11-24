@@ -1,0 +1,234 @@
+.\" Man page for radperf (radperf-rs).
+.TH RADPERF 1 "2026-11-24" "radperf-rs" "User Commands"
+.SH NAME
+radperf \- RADIUS performance-testing client
+.SH SYNOPSIS
+.B radperf
+.RI [ options ]
+.I server[:port] command
+.RI [ secret ]
+.SH DESCRIPTION
+.B radperf
+sends RADIUS requests, waits for replies, and reports throughput and latency.
+It is an independent Rust reimplementation of the C
+.B radperf
+performance-testing client.
+.PP
+Use a positional
+.I secret
+or read it from a file with
+.BR \-S .
+The file takes precedence when both are supplied.
+.PP
+The default server port is 1813 for Accounting-Requests and 1812 for other
+request codes. Use brackets around an IPv6 address with an explicit port,
+for example [::1]:1812.
+.PP
+If neither
+.B \-f
+nor
+.B \-u
+is given, input packets are read from standard input.
+.SH COMMANDS
+.TP
+.B auth
+Send an Access-Request.
+.TP
+.B acct
+Send an Accounting-Request (default port 1813).
+.TP
+.B status
+Send a Status-Server packet.
+.TP
+.B coa
+Send a CoA-Request.
+.TP
+.B disconnect
+Send a Disconnect-Request.
+.TP
+.B auto
+Send an Access-Request, or an Accounting-Request when the input contains
+Acct-Status-Type.
+.TP
+.I 1..255
+Send the given decimal RADIUS code.
+.SH OPTIONS
+.TP
+.BI \-a " type"
+Authentication method:
+.BR pap " (default), " chap " or " none .
+.B none
+requires
+.B \-A
+and skips the authentication phase.
+.TP
+.BI \-A " d,l"
+After an Access-Accept, send Accounting-Request packets every
+.I d
+seconds for
+.I l
+seconds.
+.TP
+.BI \-c " count"
+Send each input packet
+.I count
+times (default 1).
+.TP
+.BI \-C " attr[,attr]"
+Copy these attributes from the Access-Accept to the Accounting-Request.
+.TP
+.BI \-d " dir"
+Directory containing the RADIUS dictionary files. The fallback is
+.BR FREERADIUS_DICTIONARY_PATH ,
+then
+.I ../share
+relative to the executable directory.
+.TP
+.BI \-D " file"
+Write a per-packet
+.I num time delay
+line per verified reply. The send time is relative to the start of the run.
+The delay is measured from the first send to the reply, including any retries.
+Both times are written as seconds.microseconds.
+.TP
+.BI \-f " file"
+Read packets from
+.IR file .
+May be repeated; a
+.B .csv
+name selects the two-column
+.I name,password
+form.
+.TP
+.B \-F
+Also copy Framed-IP-Address from the Access-Accept.
+.TP
+.BR \-h ", " \-\-help
+Print usage and exit.
+.TP
+.BR \-j ", " \-\-json
+Print a JSON summary.
+.TP
+.BI \-m " mode"
+Message-Authenticator handling:
+.BR auto " (default), " yes " or " no .
+.TP
+.BI \-n " num"
+Pace new requests at
+.I num
+per second (0 means unlimited). This setting does not pace retransmissions.
+.TP
+.BI \-p " num"
+Allow at most
+.I num
+outstanding requests, including requests awaiting a retransmission (default 1).
+.TP
+.B \-P
+Print per-second progress statistics to standard error.
+.TP
+.B \-q
+Suppress the default per-response log and final summary.
+.TP
+.BI \-r " retries"
+Retransmit a request up to
+.I retries
+times (default 5). Use 0 to disable retransmissions.
+.TP
+.BI \-R " realm"
+Append
+.I @realm
+to unqualified input User-Name values. For generated users, use the
+supplied text as a literal suffix for both the name and password.
+.TP
+.B \-s
+Print a summary of results.
+.TP
+.BI \-S " file"
+Read the shared secret from
+.IR file .
+.TP
+.BI \-t " timeout"
+Retransmit timeout in seconds (default 5; fractional values are allowed).
+.TP
+.BI \-T " file"
+Add the attributes in
+.I file
+to every request.
+.TP
+.BI \-u " number"
+Append requests for
+.I number
+generated users after any input files, starting at user1. Each generated
+name is also its password.
+.TP
+.BR \-v ", " \-\-version
+Print version and exit.
+.TP
+.B \-x
+Increase debug output (repeatable).
+.TP
+.B \-4
+Prefer an IPv4 server address.
+.TP
+.B \-6
+Prefer an IPv6 server address.
+.SH INPUT FILES
+An attribute file uses one
+.I Name = value
+per line, with
+.B #
+comments and a blank line between packets. Values may be quoted with
+.BR \(dq .
+An attribute may carry a tag as
+.IR Name:tag " = " value
+for attributes flagged
+.BR has_tag .
+Tags range from 0 to 31.
+The operators =, +=, := and == append values in input order.
+.PP
+A file whose name ends in
+.B .csv
+is read as two columns,
+.IR name , password .
+.SH ACCOUNTING FLOW
+Each accepted Access-Request starts an accounting session. After the
+authentication phase, sessions can overlap. Each session sends a Start,
+periodic Interim-Updates and a Stop. The interval must be positive and the
+lifetime is bounded by any Session-Timeout in the Access-Accept.
+The pacing and outstanding request limits also apply to accounting requests.
+With
+.BR "\-a none" ,
+a session starts for every input packet without authentication.
+Accounting uses port 1813 unless an explicit port was supplied.
+.SH OUTPUT
+The
+.B \-s
+summary and the
+.B \-j
+JSON object follow the original layout. JSON scalar values are strings and
+the response histogram is an array of strings. The client computes
+.B total_time
+and
+.BR packets_per_second .
+First attempts and retransmissions have separate counters. A request counts
+as unanswered when it exhausts all attempts.
+.B Packets/s
+is successful replies per second. The response-time histogram has eight
+buckets.
+.PP
+.B SIGINT
+(Ctrl+C) stops the run and prints the partial summary if enabled.
+A UDP socket error also prints the partial summary if enabled and exits
+with an error.
+.SH EXIT STATUS
+.TP
+.B 0
+Success, including help and version requests.
+.TP
+.B 1
+Configuration, input, dictionary or runtime error.
+.SH SEE ALSO
+.BR radclient (1),
+.BR radiusd (8)
+.SH LICENSE
+MIT.

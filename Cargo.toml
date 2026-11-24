@@ -1,0 +1,39 @@
+[package]
+name = "radperf-rs"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "A RADIUS performance-testing client"
+license = "MIT"
+publish = false
+
+[[bin]]
+name = "radperf"
+path = "src/main.rs"
+
+[lib]
+name = "radperf_rs"
+path = "src/lib.rs"
+
+[dependencies]
+# Thin readiness-notification layer over epoll/kqueue. No async runtime: the
+# hot path (UDP send/recv + MD5) stays allocation-free and scheduler-free.
+mio = { version = "1", features = ["net", "os-poll"] }
+# Optimized MD5 (assembly on x86_64) used for RADIUS authenticators and CHAP.
+md5 = "0.7"
+libc = "0.2"
+# Safe SIGINT handling (no `unsafe` in our own code).
+signal-hook = "0.3"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.bench]
+inherits = "release"
