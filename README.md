@@ -1,5 +1,7 @@
 # radperf-rs
 
+[![Release binaries](https://github.com/miniradius/radperf-rs/actions/workflows/release.yml/badge.svg)](https://github.com/miniradius/radperf-rs/actions/workflows/release.yml)
+
 An independent Rust implementation of the `radperf` RADIUS load-testing
 client. It generates PAP, CHAP, and accounting traffic and reports throughput,
 latency, and loss. The executable is named `radperf`.
