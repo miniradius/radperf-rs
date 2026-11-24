@@ -26,6 +26,20 @@ ATTRIBUTE\tUser-Password\t2\tstring\tencrypt=1\n";
 }
 
 #[test]
+fn version_identifies_the_rust_implementation() {
+    let expected = format!("radperf {} (radperf-rs)\n", radperf_rs::VERSION);
+    for flag in ["-v", "--version"] {
+        let output = std::process::Command::new(env!("CARGO_BIN_EXE_radperf"))
+            .arg(flag)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        assert_eq!(output.stdout, expected.as_bytes());
+        assert!(output.stderr.is_empty());
+    }
+}
+
+#[test]
 fn access_request_gets_signed_response() {
     const N: usize = 20;
     let secret = b"shared-secret".to_vec();

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Identify the Rust implementation as `radperf-rs` in the `-v` and
+  `--version` output.
+
 ## 0.1.0
 
 First release of `radperf-rs`, an independent Rust RADIUS load-testing client.
