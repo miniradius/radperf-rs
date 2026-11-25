@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>radperf-rs | RADIUS Load Testing Tool</title>
+  <meta name="description" content="Load test RADIUS servers with radperf-rs, an open-source Rust tool for PAP, CHAP, and accounting. Measure throughput, latency, and packet loss.">
+  <meta name="theme-color" content="#101714">
+  <link rel="canonical" href="https://miniradius.github.io/radperf-rs/">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="radperf-rs">
+  <meta property="og:title" content="radperf-rs | RADIUS Load Testing Tool">
+  <meta property="og:description" content="Load test RADIUS servers with PAP, CHAP, and accounting traffic. Measure throughput, latency, and loss.">
+  <meta property="og:url" content="https://miniradius.github.io/radperf-rs/">
+  <meta property="og:image" content="https://miniradius.github.io/radperf-rs/social.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="radperf-rs — RADIUS load testing with PAP, CHAP, and accounting">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "radperf-rs",
+    "url": "https://miniradius.github.io/radperf-rs/",
+    "description": "Open-source RADIUS load testing tool for PAP, CHAP, and accounting. Reports throughput, latency, and packet loss.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Linux, macOS",
+    "downloadUrl": "https://github.com/miniradius/radperf-rs/releases/latest",
+    "license": "https://opensource.org/license/mit",
+    "isAccessibleForFree": true
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="wrap top">
+    <a class="brand" href="./">radperf-rs</a>
+    <nav aria-label="Main navigation">
+      <a href="#install">Install</a>
+      <a href="#quick-start">Quick start</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="https://github.com/miniradius/radperf-rs">GitHub ↗</a>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <h1 id="title">RADIUS load<br>testing in Rust</h1>
+        <p>radperf-rs sends PAP, CHAP, and accounting traffic and measures throughput, latency, and loss.</p>
+        <div class="actions">
+          <a class="button" href="https://github.com/miniradius/radperf-rs/releases/latest">Download latest release ↗</a>
+          <a href="#quick-start">Quick start ↓</a>
+        </div>
+      </div>
+      <div class="terminal" aria-hidden="true">
+        <div class="terminal-bar"><i></i><i></i><i></i><span>radperf</span></div>
+        <pre>
+                _                  __
+  _ __ __ _  __| |_ __   ___ _ __ / _|      _ __ ___
+ | '__/ _` |/ _` | '_ \ / _ \ '__| |_ _____| '__/ __|
+ | | | (_| | (_| | |_) |  __/ |  |  _|_____| |  \__ \
+ |_|  \__,_|\__,_| .__/ \___|_|  |_|       |_|  |___/
+                 |_|
+        </pre>
+      </div>
+    </section>
+    <section id="install" class="section">
+      <h2>Install radperf</h2>
+      <div class="cols">
+        <div>
+          <h3>Standalone binary</h3>
+          <p>Download a binary and <code>SHA256SUMS</code> for Linux amd64, Linux arm64, or macOS arm64. Make the binary executable and put it on your <code>PATH</code> as <code>radperf</code>.</p>
+          <a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#dictionary-lookup">FreeRADIUS dictionary setup ↗</a>
+        </div>
+        <div>
+          <h3>Docker</h3>
+          <p>The image includes the FreeRADIUS dictionary. Build it from a repository checkout.</p>
+          <pre><code>docker build -t radperf-rs .
+docker run --rm radperf-rs --version</code></pre>
+        </div>
+        <div>
+          <h3>All-in-one RADIUS tools image</h3>
+          <p><a href="https://github.com/miniradius/docker-radius-tools">docker-radius-tools</a> bundles RADIUS utilities, including
+            <code>eapol_test</code>, <code>radclient</code>, <code>radcrypt</code>, <code>radeapclient</code>, <code>radlast</code>, <code>radperf</code>,
+            <code>radsecret</code>, <code>radsniff</code>, <code>radsqlrelay</code>, <code>radtest</code>, <code>radwho</code>, <code>radzap</code>.</p>
+          <pre><code>docker run --rm ghcr.io/miniradius/docker-radius-tools:latest eapol_test -v</code></pre>
+        </div>
+      </div>
+    </section>
+    <section id="quick-start" class="section">
+      <h2>Run a PAP test with 10,000 users</h2>
+      <p>Point radperf at your test server and use its shared secret. Configure the server to accept <code>user1</code> through <code>user10000</code>, each with its username as the password.</p>
+      <div class="cols">
+        <div>
+          <h3>Command</h3>
+          <pre><code>radperf -d /usr/share/freeradius \
+  -u 10000 -s 127.0.0.1:1812 auth testing123</code></pre>
+        </div>
+        <div>
+          <h3>Example summary excerpt</h3>
+          <pre><code>Total sent        :  10000
+Total retransmits :  0
+Total succeeded   :  10000
+Total failed      :  0
+Total no reply    :  0</code></pre>
+        </div>
+      </div>
+      <a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#quick-start">More examples and CLI options ↗</a>
+    </section>
+    <section id="benchmark" class="section">
+      <h2>Sandbox benchmark</h2>
+      <p>radperf-rs (Rust) and RadPerf 2.0.1 (C) ran in the same QEMU Linux amd64 guest against a local UDP responder. Each result is the median of five runs of 20,000 PAP requests per implementation.</p>
+      <div class="table-scroll" role="region" aria-label="Benchmark results" tabindex="0">
+        <table>
+          <caption>Throughput and p95 latency for 1, 16, and 64 parallel requests</caption>
+          <thead>
+            <tr><th scope="col"><code>-p</code></th><th scope="col">C replies/s</th><th scope="col">Rust replies/s</th><th scope="col">Rust / C</th><th scope="col">C p95 (µs)</th><th scope="col">Rust p95 (µs)</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">1</th><td>5,611</td><td>9,748</td><td>1.74×</td><td>181</td><td>149</td></tr>
+            <tr><th scope="row">16</th><td>9,233</td><td>67,293</td><td>7.29×</td><td>1,901</td><td>212</td></tr>
+            <tr><th scope="row">64</th><td>9,249</td><td>70,607</td><td>7.63×</td><td>7,552</td><td>704</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#sandbox-benchmark">Benchmark methodology ↗</a></p>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <span>radperf-rs · MIT</span>
+    <nav aria-label="Documentation">
+      <a href="https://github.com/miniradius/radperf-rs#readme">README ↗</a>
+      <a href="manual.html">Manual</a>
+      <a href="https://github.com/miniradius/radperf-rs/blob/HEAD/docs/validation.md">Validation ↗</a>
+    </nav>
+  </footer>
+</body>
+</html>

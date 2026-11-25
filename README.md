@@ -22,20 +22,22 @@ The Debian Trixie slim image includes the dictionary and runs as an
 unprivileged user.
 
 ```sh
-docker build -t radperf-rs .
-docker run --rm radperf-rs -u 3 radius.example.test:1812 auth testing123
+docker build -t radperf .
+docker run --rm radperf -u 10000 radius.example.test:1812 auth testing123
 ```
 
-Replace the example endpoint with a RADIUS server reachable from the container.
-For an external dictionary or input file, mount the directory and use its
-container path. For `-D` output, mount a directory writable by the container
-user.
+Mount input files or custom dictionaries and pass their paths inside the
+container. For `-D` output, mount a directory writable by the container user.
 
-To export a local archive for both architectures:
+### All-in-one RADIUS tools image
+
+[docker-radius-tools](https://github.com/miniradius/docker-radius-tools)
+bundles RADIUS utilities, including `eapol_test`, `radclient`, `radcrypt`,
+`radeapclient`, `radlast`, `radperf`, `radsecret`, `radsniff`, `radsqlrelay`,
+`radtest`, `radwho`, `radzap`.
 
 ```sh
-docker buildx build --platform linux/amd64,linux/arm64 \
-  --output type=oci,dest=radperf-rs.oci .
+docker run --rm ghcr.io/miniradius/docker-radius-tools:latest eapol_test -v
 ```
 
 ### From source
@@ -46,15 +48,15 @@ Requires Rust 1.85 or newer. Run `cargo build --locked --release` to build
 ## Quick start
 
 ```sh
-# Generate three test users.
-radperf -d /usr/share/freeradius -u 3 -s 127.0.0.1:1812 auth testing123
+# Generate 10,000 test users.
+radperf -d /usr/share/freeradius -u 10000 -s 127.0.0.1:1812 auth testing123
 
 # Read users from an attribute file or a CSV file.
 radperf -d /usr/share/freeradius -f users.txt -p 16 -j 127.0.0.1:1812 auth testing123
 radperf -d /usr/share/freeradius -f users.csv -p 16 -j 127.0.0.1:1812 auth testing123
 ```
 
-`-u 3` generates `user1` through `user3`, using each name as its password.
+`-u 10000` generates `user1` through `user10000`, using each name as its password.
 Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
 records. Without `-f` or `-u`, the client reads requests from stdin.
