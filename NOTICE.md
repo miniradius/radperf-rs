@@ -1,7 +1,9 @@
 # radperf-rs - provenance and clean-room statement
 
-`radperf-rs` is an independent, clean-room reimplementation of a RADIUS
-performance-testing client ("radperf"). It is **not** a fork and contains **no
+`radperf-rs` is an independent, clean-room reimplementation in Rust of
+[RadPerf](https://www.networkradius.com/radius-performance-testing/),
+the RADIUS load-testing client developed in C by Network RADIUS SARL.
+It is **not** a fork and contains **no
 source code, no strings, and no documentation text copied from the C
 implementation of RadPerf or its distribution**.
 
