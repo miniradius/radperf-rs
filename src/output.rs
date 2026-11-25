@@ -6,7 +6,7 @@ use std::time::Duration;
 
 /// Write the run summary, in the reference tool's format.
 ///
-/// The field names, values and layout mirror the original `radperf` summary
+/// The field names, values and layout mirror the RadPerf 2.0.1 (C) summary
 /// (`-s`) and JSON summary (`-j`) so that scripts parsing them keep working.
 pub fn print_summary<W: Write>(
     stats: &Stats,

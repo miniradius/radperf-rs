@@ -2,8 +2,9 @@
 
 [![Release binaries](https://github.com/miniradius/radperf-rs/actions/workflows/release.yml/badge.svg)](https://github.com/miniradius/radperf-rs/actions/workflows/release.yml)
 
-An independent Rust implementation of the `radperf` RADIUS load-testing
-client. It generates PAP, CHAP, and accounting traffic and reports throughput,
+An independent Rust implementation of [RadPerf](https://www.networkradius.com/radius-performance-testing/),
+the RADIUS load-testing client developed in C by Network RADIUS SARL.
+radperf-rs generates PAP, CHAP, and accounting traffic and reports throughput,
 latency, and loss. The executable is named `radperf`.
 
 ## Install
@@ -48,20 +49,41 @@ Requires Rust 1.85 or newer. Run `cargo build --locked --release` to build
 # Generate three test users.
 radperf -d /usr/share/freeradius -u 3 -s 127.0.0.1:1812 auth testing123
 
-# Send requests from a file with up to 16 outstanding.
+# Read users from an attribute file or a CSV file.
 radperf -d /usr/share/freeradius -f users.txt -p 16 -j 127.0.0.1:1812 auth testing123
+radperf -d /usr/share/freeradius -f users.csv -p 16 -j 127.0.0.1:1812 auth testing123
 ```
 
 `-u 3` generates `user1` through `user3`, using each name as its password.
 Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
-records. An attribute file uses one `Name = value` per line, with blank lines
-between requests. A `.csv` file uses `name,password` rows. Without `-f` or `-u`,
-the client reads requests from stdin.
+records. Without `-f` or `-u`, the client reads requests from stdin.
+
+### Input files
+
+Both radperf-rs and RadPerf 2.0.1 select the input format from the filename.
+Use a lowercase `.csv` suffix for CSV files that work with both clients.
+radperf-rs also accepts uppercase suffixes such as `.CSV`. Both clients read
+`.txt` files as attribute files.
+
+**`users.txt`** uses one `Name = value` per line. A blank line separates
+requests.
 
 ```text
 User-Name = "alice"
-User-Password = "test-password"
+User-Password = "alice-test-password"
+
+User-Name = "bob"
+User-Password = "bob-test-password"
+```
+
+**`users.csv`** contains one user per line and two comma-separated fields,
+`name,password`. Omit the header. If your spreadsheet exports semicolons,
+select a comma as the delimiter.
+
+```csv
+alice,alice-test-password
+bob,bob-test-password
 ```
 
 The general form is `radperf [options] server[:port] <command> [secret]`.
@@ -97,13 +119,13 @@ also applies to generated users. The Docker image sets
 ## Compatibility
 
 PAP, CHAP, and accounting were tested against FreeRADIUS. The text summary
-layout and JSON keys follow the original `radperf` 2.0.1. Differences that
-matter to scripts include:
+layout and JSON keys follow RadPerf 2.0.1 (C). Differences that matter to scripts
+include:
 
-- The `-D` time columns are relative send time and round-trip delay. The
-  original writes absolute send and receive timestamps.
-- Per-response logs go to stderr. The original logs them to stdout.
-- `auto` selects a standard request code for the run. The original sent 255
+- The `-D` time columns are relative send time and round-trip delay. RadPerf (C)
+  writes absolute send and receive timestamps.
+- Per-response logs go to stderr. RadPerf (C) logs them to stdout.
+- `auto` selects a standard request code for the run. RadPerf (C) sent 255
   in the tested cases. `-P` reports progress and `-r 0` disables retries.
 - `-u N` preserves all supplied records and appends exactly `N` users.
 - On a UDP socket error, the client exits nonzero and prints the partial
@@ -114,14 +136,15 @@ See [validation](docs/validation.md) for the tested cases and
 
 ## Sandbox benchmark
 
-Both clients ran in the same QEMU Linux amd64 guest against the same local
-UDP responder. Each row is the median of five runs of 20,000 PAP requests per
-client, in quiet mode with `-D` enabled and no rate cap. The Rust client used
-`-m no` to match the original packet size. All 600,000 requests received
+RadPerf 2.0.1 (C) and radperf-rs (Rust) ran in the same QEMU Linux amd64
+guest against the same local UDP responder. Each row is the median of five
+runs of 20,000 PAP requests per implementation, in quiet mode with `-D`
+enabled and no rate cap. radperf-rs used `-m no` to match the packet size of
+RadPerf (C). All 600,000 requests received
 replies without retransmission. Throughput is measured from first send to
 last reply.
 
-| `-p` | Original replies/s | Rust replies/s | Rust / original | Original p95 (µs) | Rust p95 (µs) |
+| `-p` | C replies/s | Rust replies/s | Rust / C | C p95 (µs) | Rust p95 (µs) |
 | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 5,611 | 9,748 | 1.74× | 181 | 149 |
 | 16 | 9,233 | 67,293 | 7.29× | 1,901 | 212 |

@@ -71,7 +71,7 @@ run with a wrong password returned 20 Access-Rejects. The two-session
 `-A 0.2,0.5` run returned two Access-Accepts and eight Accounting-Responses.
 All five runs had zero retransmissions and zero unanswered requests.
 
-## Comparison with Linux radperf 2.0.1
+## Comparison with RadPerf 2.0.1 (C)
 
 The x86_64 reference binary was run in an emulated amd64 Linux guest. A local
 UDP server recorded request codes and attributes and returned signed RADIUS
@@ -81,15 +81,15 @@ against the Rust implementation.
 The verified output formats include the `-s` summary layout and its eight
 response-time buckets and the `-j` JSON keys and string value types.
 For `-D`, both implementations write the packet number and two time values
-in `seconds.microseconds`, separated by spaces. The original records absolute
-send and receive timestamps. The Rust version records the offset from the
+in `seconds.microseconds`, separated by spaces. RadPerf (C) records absolute
+send and receive timestamps. radperf-rs records the offset from the
 start of the run and the round-trip delay. `Packets/s` counts successful replies
 per second.
-The Rust implementation calculates the JSON values for `total_time` and
-`packets_per_second`. The Rust version sends the default per-response log to
-stderr. The reference sent it to stdout.
+radperf-rs calculates the JSON values for `total_time` and
+`packets_per_second`. radperf-rs sends the default per-response log to
+stderr. RadPerf (C) sent it to stdout.
 
-| Case | Linux radperf 2.0.1 observation | Rust behavior |
+| Case | RadPerf 2.0.1 (C) | radperf-rs (Rust) |
 | --- | --- | --- |
 | `-u` | Generated names start at `user1` and double as PAP passwords. The `-R` text is a literal suffix for both fields. Generated records did not inherit attributes from file records, and `-T` applied to both. With two file records and `-u 2`, the reference sent two file records and one generated record. With three file records and `-u 1`, it sent only the first two file records. | Preserves every file record and appends exactly the requested number of generated records. `-R` also qualifies unqualified file and stdin names. |
 | Attribute operators | Repeated `Class` values were sent in order with `=`, `+=`, `:=`, and `==`, both within one record and with `-T`. | Preserves order and multiplicity. The Rust input format expects hexadecimal for octet attributes such as `Class`. |
@@ -98,7 +98,7 @@ stderr. The reference sent it to stdout.
 | `-P` | With `-n 2 -c 6`, the control invocation sent six requests and exited successfully. Adding only `-P` printed usage, returned exit status 1 and sent no packets. | Prints per-second progress on stderr. |
 
 The overlapping accounting scheduler is covered by local integration tests.
-Its timing has not been compared against the original.
+Its timing has not been compared against RadPerf (C).
 
 The reference distribution is supplied separately. To reproduce the quick
 CLI and debug captures, run `scripts/capture_reference.sh` with

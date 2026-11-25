@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Capture reference outputs from the original Linux radperf (x86_64).
+# Capture reference outputs from the RadPerf reference binary for Linux (x86_64).
 #
 # Runs the real binary in an amd64 Linux container (native on x86_64, Rosetta
 # on Apple Silicon) and records the help/version text and the -xx debug output
@@ -16,7 +16,7 @@ OUT="$ROOT/reference"
 mkdir -p "$OUT"
 
 if [ ! -x "$RP/bin/radperf" ]; then
-  echo "original radperf not found at $RP/bin/radperf" >&2
+  echo "RadPerf reference binary not found at $RP/bin/radperf" >&2
   echo "set RADPERF_ORIG to the extracted 'radperf' directory (with bin/ and lib/)" >&2
   exit 1
 fi

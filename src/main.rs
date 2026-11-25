@@ -36,7 +36,7 @@ fn run(args: &[String]) -> Result<(), String> {
         return Ok(());
     }
     if opts.version {
-        println!("radperf {} (radperf-rs)", radperf_rs::VERSION);
+        println!("radperf {} (miniradius/radperf-rs)", radperf_rs::VERSION);
         return Ok(());
     }
     if opts.positional.len() < 2 {

@@ -27,7 +27,7 @@ ATTRIBUTE\tUser-Password\t2\tstring\tencrypt=1\n";
 
 #[test]
 fn version_identifies_the_rust_implementation() {
-    let expected = format!("radperf {} (radperf-rs)\n", radperf_rs::VERSION);
+    let expected = format!("radperf {} (miniradius/radperf-rs)\n", radperf_rs::VERSION);
     for flag in ["-v", "--version"] {
         let output = std::process::Command::new(env!("CARGO_BIN_EXE_radperf"))
             .arg(flag)

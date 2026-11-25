@@ -22,5 +22,5 @@ See [scaling measurements and follow-up plan](docs/scaling.md).
       per worker thread or investigate Linux batching and `SO_REUSEPORT`.
 
 See [README.md](README.md) for supported usage and intentional differences
-from the original. See [docs/validation.md](docs/validation.md) for verification
+from RadPerf 2.0.1 (C). See [docs/validation.md](docs/validation.md) for verification
 and [CHANGELOG.md](CHANGELOG.md) for changes intended for release.
