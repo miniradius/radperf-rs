@@ -23,7 +23,7 @@ unprivileged user.
 
 ```sh
 docker build -t radperf .
-docker run --rm radperf -u 10000 radius.example.test:1812 auth testing123
+docker run --rm radperf -u 1000000 radius.example.test:1812 auth testing123
 ```
 
 Mount input files or custom dictionaries and pass their paths inside the
@@ -37,7 +37,7 @@ bundles RADIUS utilities, including `eapol_test`, `radclient`, `radcrypt`,
 `radtest`, `radwho`, `radzap`.
 
 ```sh
-docker run --rm ghcr.io/miniradius/docker-radius-tools:latest eapol_test -v
+docker run --rm ghcr.io/miniradius/docker-radius-tools:latest radperf -v
 ```
 
 ### From source
@@ -48,15 +48,15 @@ Requires Rust 1.85 or newer. Run `cargo build --locked --release` to build
 ## Quick start
 
 ```sh
-# Generate 10,000 test users.
-radperf -d /usr/share/freeradius -u 10000 -s 127.0.0.1:1812 auth testing123
+# Generate 1,000,000 test users.
+radperf -d /usr/share/freeradius -u 1000000 -s 127.0.0.1:1812 auth testing123
 
 # Read users from an attribute file or a CSV file.
 radperf -d /usr/share/freeradius -f users.txt -p 16 -j 127.0.0.1:1812 auth testing123
 radperf -d /usr/share/freeradius -f users.csv -p 16 -j 127.0.0.1:1812 auth testing123
 ```
 
-`-u 10000` generates `user1` through `user10000`, using each name as its password.
+`-u 1000000` generates `user1` through `user1000000`, using each name as its password.
 Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
 records. Without `-f` or `-u`, the client reads requests from stdin.
@@ -136,23 +136,28 @@ include:
 See [validation](docs/validation.md) for the tested cases and
 [the changelog](CHANGELOG.md) for release notes.
 
-## Sandbox benchmark
+## Rust vs. C benchmark
 
-RadPerf 2.0.1 (C) and radperf-rs (Rust) ran in the same QEMU Linux amd64
-guest against the same local UDP responder. Each row is the median of five
-runs of 20,000 PAP requests per implementation, in quiet mode with `-D`
-enabled and no rate cap. radperf-rs used `-m no` to match the packet size of
-RadPerf (C). All 600,000 requests received
-replies without retransmission. Throughput is measured from first send to
-last reply.
+RadPerf 2.0.1 (C) and radperf-rs 0.1.1 (Rust) ran in a QEMU Linux amd64
+guest against the same local UDP responder. Each cell reports one completed
+run of 1,000,000 PAP requests sent with the same credentials. Both clients
+ran in quiet mode with `-D` enabled and no rate cap. radperf-rs used
+`-m no` to match the 45-byte packets of RadPerf (C). Throughput is measured
+from first send to last reply. All completed runs received 1,000,000 replies
+without retransmissions.
 
 | `-p` | C replies/s | Rust replies/s | Rust / C | C p95 (µs) | Rust p95 (µs) |
 | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | 5,611 | 9,748 | 1.74× | 181 | 149 |
-| 16 | 9,233 | 67,293 | 7.29× | 1,901 | 212 |
-| 64 | 9,249 | 70,607 | 7.63× | 7,552 | 704 |
+| 1 | 5,688 | 9,837 | 1.73× | 168 | 134 |
+| 16 | 9,187 | 66,008 | 7.19× | 1,895 | 227 |
+| 64 | 8,961 | 68,128 | 7.60× | 7,702 | 647 |
 
-The figures apply to this emulated loopback workload. Separate
+This benchmark compares the C and Rust implementations under the same
+test conditions. Measuring peak throughput requires a
+separate bare-metal benchmark, where both implementations may achieve
+substantially higher throughput.
+
+Separate
 [scaling measurements](docs/scaling.md) cover multiple client processes
 in the arm64 sandbox.
 

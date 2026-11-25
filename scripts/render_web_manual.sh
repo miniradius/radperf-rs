@@ -7,8 +7,8 @@ cat <<'HTML'
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>radperf(1) Manual | radperf-rs</title>
-  <meta name="description" content="Read the radperf manual for RADIUS load testing commands, CLI options, input files, accounting, and output formats.">
+  <title>radperf(1) Manual | RADIUS Load Testing</title>
+  <meta name="description" content="Read the radperf manual for RADIUS load testing commands, FreeRADIUS dictionary setup, CLI options, and output formats.">
   <meta name="theme-color" content="#101714">
   <link rel="canonical" href="https://miniradius.github.io/radperf-rs/manual.html">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
