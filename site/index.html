@@ -102,7 +102,7 @@ docker run --rm radperf --version</code></pre>
         </div>
         <div>
           <h3>Measured summary excerpt</h3>
-          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox.</p>
+          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox. FreeRADIUS loaded one million users through its <code>files</code> module and required <code>Message-Authenticator</code> on the loopback client.</p>
           <pre><code>Total sent        :  1000000
 Total retransmits :  0
 Total succeeded   :  1000000
@@ -116,7 +116,7 @@ Packets/s         :  15957</code></pre>
     </section>
     <section id="benchmark" class="section">
       <h2>Rust vs. C benchmark</h2>
-      <p>radperf-rs 0.1.1 (Rust) and RadPerf 2.0.1 (C) ran in a QEMU Linux amd64 guest against the same local UDP responder. Each result comes from one completed run of 1,000,000 PAP requests, using the same credentials throughout.</p>
+      <p>radperf-rs 0.1.1 (Rust) and RadPerf 2.0.1 (C) ran in a QEMU Linux amd64 guest against the same minimal UDP responder, which returned a signed <code>Access-Accept</code> for each request. Each result comes from one completed run of 1,000,000 PAP requests, using the same credentials throughout.</p>
       <p>This benchmark compares the C and Rust implementations under the same test conditions. Measuring peak throughput requires a separate bare-metal benchmark, where both implementations may achieve substantially higher throughput.</p>
       <div class="table-scroll" role="region" aria-label="Benchmark results" tabindex="0">
         <table>

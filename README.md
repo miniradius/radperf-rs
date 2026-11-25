@@ -61,6 +61,10 @@ Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
 records. Without `-f` or `-u`, the client reads requests from stdin.
 
+The measured Quick start run used FreeRADIUS 3.2.7 on Linux arm64 loopback.
+FreeRADIUS loaded one million users through its `files` module and required
+`Message-Authenticator` on the loopback client.
+
 ### Input files
 
 Both radperf-rs and RadPerf 2.0.1 select the input format from the filename.
@@ -139,8 +143,9 @@ See [validation](docs/validation.md) for the tested cases and
 ## Rust vs. C benchmark
 
 RadPerf 2.0.1 (C) and radperf-rs 0.1.1 (Rust) ran in a QEMU Linux amd64
-guest against the same local UDP responder. Each cell reports one completed
-run of 1,000,000 PAP requests sent with the same credentials. Both clients
+guest against the same minimal UDP responder, which returned a signed
+`Access-Accept` for each request. Each cell reports one completed run of
+1,000,000 PAP requests sent with the same credentials. Both clients
 ran in quiet mode with `-D` enabled and no rate cap. radperf-rs used
 `-m no` to match the 45-byte packets of RadPerf (C). Throughput is measured
 from first send to last reply. All completed runs received 1,000,000 replies
