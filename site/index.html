@@ -101,12 +101,11 @@ docker run --rm radperf --version</code></pre>
         <div>
           <h3>Command</h3>
           <pre><code>radperf -d /usr/share/freeradius \
-  -u 10000 -s 127.0.0.1:1812 auth testing123</code></pre>
-          <p>To see only the summary in your terminal, append <code>2&gt;radperf.log</code> to save response logs and errors to a file.</p>
+  -u 10000 -s 127.0.0.1:1812 auth testing123 2&gt;radperf.log</code></pre>
+          <p>Response logs and errors are written to <code>radperf.log</code>.</p>
         </div>
         <div>
           <h3>Measured summary excerpt</h3>
-          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox. FreeRADIUS loaded 10,000 users through its <code>files</code> module and required <code>Message-Authenticator</code> on the loopback client.</p>
           <pre><code>Total sent        :  10000
 Total retransmits :  0
 Total succeeded   :  10000
@@ -114,6 +113,7 @@ Total failed      :  0
 Total no reply    :  0
 Total time (s)    :  0.617
 Packets/s         :  16195</code></pre>
+          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox. FreeRADIUS loaded 10,000 users through its <code>files</code> module and required <code>Message-Authenticator</code> on the loopback client.</p>
         </div>
       </div>
       <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#quick-start">More examples ↗</a> · <a href="manual.html">CLI reference</a></p>

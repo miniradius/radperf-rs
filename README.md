@@ -49,7 +49,8 @@ Requires Rust 1.85 or newer. Run `cargo build --locked --release` to build
 
 ```sh
 # Generate 10,000 test users.
-radperf -d /usr/share/freeradius -u 10000 -s 127.0.0.1:1812 auth testing123
+radperf -d /usr/share/freeradius \
+  -u 10000 -s 127.0.0.1:1812 auth testing123 2>radperf.log
 
 # Read users from an attribute file or a CSV file.
 radperf -d /usr/share/freeradius -f users.txt -p 16 -j 127.0.0.1:1812 auth testing123
@@ -57,6 +58,7 @@ radperf -d /usr/share/freeradius -f users.csv -p 16 -j 127.0.0.1:1812 auth testi
 ```
 
 `-u 10000` generates `user1` through `user10000`, using each name as its password.
+The first command writes response logs and errors to `radperf.log`.
 Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
 records. Without `-f` or `-u`, the client reads requests from stdin.
