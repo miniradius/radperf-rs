@@ -20,7 +20,8 @@ First release of `radperf-rs`, an independent Rust RADIUS load-testing client.
 - Load attribute files or CSV, apply request templates, or generate test users
   with `-u`.
 - Report throughput, latency, and retransmissions in text or JSON. The `-D`
-  output records relative send time and round-trip delay. RadPerf 2.0.1 (C) records absolute send and receive timestamps.
+  output records relative send time and round-trip delay. RadPerf 2.0.1
+  records absolute send and receive timestamps.
 - Standalone binaries for Linux amd64, Linux arm64, and macOS arm64 require
   an external FreeRADIUS dictionary. The Debian Trixie slim Docker image for
   Linux amd64 and arm64 includes the dictionary.

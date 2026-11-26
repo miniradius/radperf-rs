@@ -91,9 +91,16 @@ h1 {
 .cols { gap: 1.25rem; }
 .cols > div { padding: 1.25rem; background: var(--panel); border: 1px solid var(--line); border-radius: .5rem; }
 pre { overflow-x: auto; padding: .75rem; background: var(--background); border: 1px solid var(--line); border-radius: .3rem; font-size: .875rem; }
-.table-scroll { overflow-x: auto; }
+.table-scroll { overflow-x: auto; container-type: inline-size; }
 table { width: 100%; border-collapse: collapse; white-space: nowrap; font-size: .875rem; }
-caption { text-align: left; color: var(--muted); padding-bottom: .6rem; }
+.table-scroll caption {
+  max-inline-size: 100cqi;
+  padding-bottom: .75rem;
+  color: var(--ink);
+  font: 700 1.125rem/1.3 'Inter', system-ui, sans-serif;
+  text-align: left;
+  white-space: normal;
+}
 th, td { text-align: right; border-bottom: 1px solid var(--line); padding: .65rem .85rem; }
 thead { background: var(--panel); }
 tbody td:nth-child(4) { color: var(--accent); font-weight: 700; }

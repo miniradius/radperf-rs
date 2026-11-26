@@ -125,13 +125,13 @@ also applies to generated users. The Docker image sets
 ## Compatibility
 
 PAP, CHAP, and accounting were tested against FreeRADIUS. The text summary
-layout and JSON keys follow RadPerf 2.0.1 (C). Differences that matter to scripts
+layout and JSON keys follow RadPerf 2.0.1. Differences that matter to scripts
 include:
 
-- The `-D` time columns are relative send time and round-trip delay. RadPerf (C)
+- The `-D` time columns are relative send time and round-trip delay. RadPerf
   writes absolute send and receive timestamps.
-- Per-response logs go to stderr. RadPerf (C) logs them to stdout.
-- `auto` selects a standard request code for the run. RadPerf (C) sent 255
+- Per-response logs go to stderr. RadPerf logs them to stdout.
+- `auto` selects a standard request code for the run. RadPerf sent 255
   in the tested cases. `-P` reports progress and `-r 0` disables retries.
 - `-u N` preserves all supplied records and appends exactly `N` users.
 - On a UDP socket error, the client exits nonzero and prints the partial
@@ -140,25 +140,27 @@ include:
 See [validation](docs/validation.md) for the tested cases and
 [the changelog](CHANGELOG.md) for release notes.
 
-## Rust vs. C benchmark
+## Benchmarking the Rust and C implementations of radperf
 
-RadPerf 2.0.1 (C) and radperf-rs 0.1.1 (Rust) ran in a QEMU Linux amd64
-guest against the same minimal UDP responder, which returned a signed
-`Access-Accept` for each request. Each cell reports one completed run of
-1,000,000 PAP requests sent with the same credentials. Both clients
-ran in quiet mode with `-D` enabled and no rate cap. radperf-rs used
-`-m no` to match the 45-byte packets of RadPerf (C). Throughput is measured
+We benchmarked radperf-rs 0.1.1, written in Rust, and RadPerf 2.0.1, written
+in C, in the same QEMU Linux amd64 guest against the same minimal UDP
+responder. Each run sent 1,000,000 PAP `Access-Request` packets using the same
+plaintext password from the input file. The responder returned a signed
+`Access-Accept` for every request,
+regardless of credentials. Both clients ran in quiet mode with `-D` enabled
+and no rate cap. radperf-rs used
+`-m no` to match the 45-byte packets of RadPerf. Throughput is measured
 from first send to last reply. All completed runs received 1,000,000 replies
 without retransmissions.
 
-| `-p` | C replies/s | Rust replies/s | Rust / C | C p95 (µs) | Rust p95 (µs) |
+| `-p` | RadPerf replies/s | radperf-rs replies/s | radperf-rs / RadPerf | RadPerf p95 (µs) | radperf-rs p95 (µs) |
 | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | 5,688 | 9,837 | 1.73× | 168 | 134 |
 | 16 | 9,187 | 66,008 | 7.19× | 1,895 | 227 |
 | 64 | 8,961 | 68,128 | 7.60× | 7,702 | 647 |
 
-This benchmark compares the C and Rust implementations under the same
-test conditions. Measuring peak throughput requires a
+This benchmark compares radperf-rs and RadPerf under identical
+emulated loopback conditions. Measuring peak throughput requires a
 separate bare-metal benchmark, where both implementations may achieve
 substantially higher throughput.
 

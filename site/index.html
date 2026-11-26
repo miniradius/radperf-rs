@@ -44,7 +44,7 @@
     <section class="hero" aria-labelledby="title">
       <div>
         <h1 id="title">RADIUS load<br>testing in Rust</h1>
-        <p>radperf-rs load tests FreeRADIUS and other RADIUS servers with PAP, CHAP, and accounting traffic. It measures throughput, latency, and packet loss. Run it with <code class="hero-command">radperf</code></p>
+        <p>radperf-rs load tests FreeRADIUS and other RADIUS servers with PAP, CHAP, and accounting traffic. It measures throughput, latency, and packet loss. Run it with <code class="hero-command">radperf</code>, the same command name as RadPerf. See <a href="https://github.com/miniradius/radperf-rs#compatibility">compatibility notes</a> for differences that affect existing scripts.</p>
         <div class="actions">
           <a class="button" href="https://github.com/miniradius/radperf-rs/releases/latest">Download latest release ↗</a>
           <a href="#quick-start">Quick start ↓</a>
@@ -115,14 +115,14 @@ Packets/s         :  15957</code></pre>
       <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#quick-start">More examples ↗</a> · <a href="manual.html">CLI reference</a></p>
     </section>
     <section id="benchmark" class="section">
-      <h2>Rust vs. C benchmark</h2>
-      <p>radperf-rs 0.1.1 (Rust) and RadPerf 2.0.1 (C) ran in a QEMU Linux amd64 guest against the same minimal UDP responder, which returned a signed <code>Access-Accept</code> for each request. Each result comes from one completed run of 1,000,000 PAP requests, using the same credentials throughout.</p>
-      <p>This benchmark compares the C and Rust implementations under the same test conditions. Measuring peak throughput requires a separate bare-metal benchmark, where both implementations may achieve substantially higher throughput.</p>
+      <h2>Benchmarking the Rust and C implementations of radperf</h2>
+      <p>We benchmarked radperf-rs 0.1.1, written in Rust, and RadPerf 2.0.1, written in C, in the same QEMU Linux amd64 guest against the same minimal UDP responder. Each run sent 1,000,000 PAP <code>Access-Request</code> packets using the same plaintext password from the input file. The responder returned a signed <code>Access-Accept</code> for every request, regardless of credentials.</p>
+      <p>This benchmark compares radperf-rs and RadPerf under identical emulated loopback conditions. Measuring peak throughput requires a separate bare-metal benchmark, where both implementations may achieve substantially higher throughput.</p>
       <div class="table-scroll" role="region" aria-label="Benchmark results" tabindex="0">
         <table>
           <caption>Throughput and p95 latency for 1, 16, and 64 parallel requests</caption>
           <thead>
-            <tr><th scope="col"><code>-p</code></th><th scope="col">C replies/s</th><th scope="col">Rust replies/s</th><th scope="col">Rust / C</th><th scope="col">C p95 (µs)</th><th scope="col">Rust p95 (µs)</th></tr>
+            <tr><th scope="col"><code>-p</code></th><th scope="col">RadPerf replies/s</th><th scope="col">radperf-rs replies/s</th><th scope="col">radperf-rs / RadPerf</th><th scope="col">RadPerf p95 (µs)</th><th scope="col">radperf-rs p95 (µs)</th></tr>
           </thead>
           <tbody>
             <tr><th scope="row">1</th><td>5,688</td><td>9,837</td><td>1.73×</td><td>168</td><td>134</td></tr>
@@ -131,7 +131,8 @@ Packets/s         :  15957</code></pre>
           </tbody>
         </table>
       </div>
-      <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#rust-vs-c-benchmark">Benchmark details ↗</a></p>
+      <p>Both clients ran in quiet mode with <code>-D</code> enabled and no rate cap. radperf-rs used <code>-m no</code> to match RadPerf's 45-byte requests. Throughput was measured from the first send to the last reply.</p>
+      <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#benchmarking-the-rust-and-c-implementations-of-radperf">Benchmark details ↗</a></p>
     </section>
   </main>
   <footer class="wrap footer">
