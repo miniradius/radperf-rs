@@ -55,14 +55,6 @@ h1 {
   letter-spacing: -.055em;
 }
 .hero p { margin-top: 1.3rem; max-width: 38ch; font-size: 1.125rem; }
-.hero-command {
-  padding: .1em .35em;
-  border: 1px solid var(--line);
-  border-radius: .25em;
-  background: var(--panel);
-  color: var(--accent);
-  font-size: .9em;
-}
 .actions { margin-top: 1.6rem; }
 .button {
   display: inline-block;
