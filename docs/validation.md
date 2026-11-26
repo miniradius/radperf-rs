@@ -39,10 +39,22 @@ by `-A`.
 
 ## 3. Interoperability with FreeRADIUS
 
-`scripts/interop_freeradius.sh` runs the client against a real FreeRADIUS
-server (the reference implementation) and asserts zero loss.
+Run the current interoperability check with a local FreeRADIUS 3 installation
+that uses the Debian configuration layout, Python 3, and `sudo`:
 
-Validated on **FreeRADIUS 3.2.8**:
+```sh
+scripts/interop_freeradius.sh ./target/release/radperf /usr/share/freeradius
+```
+
+The script starts a temporary FreeRADIUS instance from a copy of the installed
+configuration. It requires `Message-Authenticator` on the loopback client.
+Ports 1812 and 1813 and any additional listeners in that configuration must
+be free. It checks 500 successes each for PAP, CHAP,
+and standalone accounting, 20 expected CHAP rejects, and eight successful
+replies from two overlapping accounting sessions with `-A 1,2`. Every
+scenario requires zero retransmissions and zero unanswered requests.
+
+Earlier validation on **FreeRADIUS 3.2.8** produced these results:
 
 | Scenario | Result |
 | --- | --- |
@@ -62,11 +74,9 @@ This exercises, against an independent implementation:
 * the Response Authenticator verification on the client side;
 * response-code accounting (`access-accept` / `access-reject`).
 
-> FreeRADIUS 3.2.8 requires a `Message-Authenticator` on Access-Requests by
-> default (BlastRADIUS mitigation, CVE-2024-3596). `radperf` adds one
-> automatically (`-m auto`, the default) and `-m no` disables it. Accounting
-> requests do not carry one, matching `radclient`. The interoperability checks
-> above pass with the requirement enabled.
+`radperf` automatically adds a `Message-Authenticator` to Access-Requests
+with the default `-m auto`. Use `-m no` to disable automatic insertion.
+The client omits it by default for Accounting-Requests.
 
 The 0.1.0 candidate was also tested against FreeRADIUS 3.2.7 with
 `require_message_authenticator = yes` on the localhost client. PAP, CHAP
