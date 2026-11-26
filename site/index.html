@@ -92,24 +92,24 @@ docker run --rm radperf --version</code></pre>
     </section>
     <section id="quick-start" class="section">
       <h2>Quick start</h2>
-      <p>To run a PAP test with one million users, point radperf at your test server and use its shared secret. Configure the server to accept <code>user1</code> through <code>user1000000</code>, each with its username as the password.</p>
+      <p>To run a PAP test with 10,000 users, point radperf at your test server and use its shared secret. Configure the server to accept <code>user1</code> through <code>user10000</code>, each with its username as the password.</p>
       <div class="cols">
         <div>
           <h3>Command</h3>
           <pre><code>radperf -d /usr/share/freeradius \
-  -u 1000000 -s 127.0.0.1:1812 auth testing123</code></pre>
+  -u 10000 -s 127.0.0.1:1812 auth testing123</code></pre>
           <p>To see only the summary in your terminal, append <code>2&gt;radperf.log</code> to save response logs and errors to a file.</p>
         </div>
         <div>
           <h3>Measured summary excerpt</h3>
-          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox. FreeRADIUS loaded one million users through its <code>files</code> module and required <code>Message-Authenticator</code> on the loopback client.</p>
-          <pre><code>Total sent        :  1000000
+          <p>One loopback run with radperf-rs 0.1.1 and FreeRADIUS 3.2.7 in a Linux arm64 sandbox. FreeRADIUS loaded 10,000 users through its <code>files</code> module and required <code>Message-Authenticator</code> on the loopback client.</p>
+          <pre><code>Total sent        :  10000
 Total retransmits :  0
-Total succeeded   :  1000000
+Total succeeded   :  10000
 Total failed      :  0
 Total no reply    :  0
-Total time (s)    :  62.670
-Packets/s         :  15957</code></pre>
+Total time (s)    :  0.617
+Packets/s         :  16195</code></pre>
         </div>
       </div>
       <p><a href="https://github.com/miniradius/radperf-rs/blob/HEAD/README.md#quick-start">More examples ↗</a> · <a href="manual.html">CLI reference</a></p>

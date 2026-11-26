@@ -23,7 +23,7 @@ unprivileged user.
 
 ```sh
 docker build -t radperf .
-docker run --rm radperf -u 1000000 radius.example.test:1812 auth testing123
+docker run --rm radperf -u 10000 radius.example.test:1812 auth testing123
 ```
 
 Mount input files or custom dictionaries and pass their paths inside the
@@ -48,22 +48,23 @@ Requires Rust 1.85 or newer. Run `cargo build --locked --release` to build
 ## Quick start
 
 ```sh
-# Generate 1,000,000 test users.
-radperf -d /usr/share/freeradius -u 1000000 -s 127.0.0.1:1812 auth testing123
+# Generate 10,000 test users.
+radperf -d /usr/share/freeradius -u 10000 -s 127.0.0.1:1812 auth testing123
 
 # Read users from an attribute file or a CSV file.
 radperf -d /usr/share/freeradius -f users.txt -p 16 -j 127.0.0.1:1812 auth testing123
 radperf -d /usr/share/freeradius -f users.csv -p 16 -j 127.0.0.1:1812 auth testing123
 ```
 
-`-u 1000000` generates `user1` through `user1000000`, using each name as its password.
+`-u 10000` generates `user1` through `user10000`, using each name as its password.
 Configure the server to accept those credentials if you want successful test
 logins. When combined with `-f`, generated users are appended to the file
 records. Without `-f` or `-u`, the client reads requests from stdin.
 
-The measured Quick start run used FreeRADIUS 3.2.7 on Linux arm64 loopback.
-FreeRADIUS loaded one million users through its `files` module and required
-`Message-Authenticator` on the loopback client.
+One measured run used radperf-rs 0.1.1 and FreeRADIUS 3.2.7 on Linux arm64
+loopback. FreeRADIUS loaded 10,000 users through its `files` module and
+required `Message-Authenticator` on the loopback client. All 10,000 requests
+succeeded in 0.617 seconds at 16,195 replies/s, with zero retransmissions.
 
 ### Input files
 
