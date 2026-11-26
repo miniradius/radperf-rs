@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Include scheduled accounting replies in the per-response output written by
+  `-D`.
+
 ## 0.1.1
 
 - Identify the Rust implementation as `miniradius/radperf-rs` in the `-v`

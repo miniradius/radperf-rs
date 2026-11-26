@@ -371,9 +371,11 @@ fn check_accounting_overlap(direct: bool) {
                 .iter()
                 .all(|&phase| phase == accounting::STATUS_INTERIM));
         }
+        accepted + sessions.values().map(Vec::len).sum::<usize>()
     });
 
     let dir = tempfile::tempdir().unwrap();
+    let delays = dir.path().join("delays");
     std::fs::write(
         dir.path().join("dictionary"),
         "ATTRIBUTE User-Name 1 string\nATTRIBUTE User-Password 2 string encrypt=1\n",
@@ -386,6 +388,8 @@ fn check_accounting_overlap(direct: bool) {
     let output = command
         .args(["-d"])
         .arg(dir.path())
+        .arg("-D")
+        .arg(&delays)
         .args([
             "-u", "2", "-p", "2", "-A", "0.1,0.4", "-r", "0", "-t", "1", "-j",
         ])
@@ -393,7 +397,7 @@ fn check_accounting_overlap(direct: bool) {
         .args(["auth", "shared-secret"])
         .output()
         .unwrap();
-    server_thread.join().unwrap();
+    let expected_responses = server_thread.join().unwrap();
     assert!(
         output.status.success(),
         "{}",
@@ -401,6 +405,12 @@ fn check_accounting_overlap(direct: bool) {
     );
     let stdout = String::from_utf8(output.stdout).unwrap();
     assert!(stdout.contains(r#""total_no_reply":"0""#), "{stdout}");
+    assert!(
+        stdout.contains(&format!(r#""total_succeeded":"{expected_responses}""#)),
+        "{stdout}"
+    );
+    let delays = std::fs::read_to_string(delays).unwrap();
+    assert_eq!(delays.lines().count(), expected_responses, "{delays}");
 }
 
 #[cfg(target_os = "linux")]

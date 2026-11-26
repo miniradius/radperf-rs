@@ -196,11 +196,10 @@ impl Client {
 
     /// Run to completion and return the collected statistics.
     pub fn run(&mut self) -> io::Result<Stats> {
-        let run_result = self.run_requests();
+        let run_result = self.run_requests().and_then(|()| self.run_accounting());
         let flush_result = self.delays.take().map_or(Ok(()), |mut w| w.flush());
         run_result?;
         flush_result?;
-        self.run_accounting()?;
         Ok(self.stats.clone())
     }
 

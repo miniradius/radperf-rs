@@ -33,6 +33,10 @@ schedule for new requests untouched. The summary reports one success,
 one rejection and one exhausted request. A second test verifies that the
 accounting flow uses the same counter and latency definitions.
 
+The overlapping and direct accounting tests in `tests/end_to_end.rs` also
+check that `-D` records every verified response, including those generated
+by `-A`.
+
 ## 3. Interoperability with FreeRADIUS
 
 `scripts/interop_freeradius.sh` runs the client against a real FreeRADIUS
