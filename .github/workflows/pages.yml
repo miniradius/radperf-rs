@@ -36,9 +36,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends mandoc
           sh scripts/render_web_manual.sh > site/manual.html
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6.0.0
+      - uses: actions/upload-pages-artifact@v5.0.0
         with:
           path: site
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5.0.1
         id: deployment
