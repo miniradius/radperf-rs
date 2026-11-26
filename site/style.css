@@ -39,9 +39,9 @@ code, pre, table, .brand { font-family: var(--mono); }
 .top { border-bottom: 1px solid var(--line); }
 .brand { color: var(--ink); font-weight: 700; text-decoration: none; }
 nav, .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.4rem; }
-nav, .github-link { font-size: .875rem; }
-nav a, .github-link { color: var(--muted); text-decoration: none; }
-nav a:hover, .github-link:hover { color: var(--accent); text-decoration: underline; }
+nav { font-size: .875rem; }
+nav a { color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--accent); text-decoration: underline; }
 
 .hero, .cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .hero {
